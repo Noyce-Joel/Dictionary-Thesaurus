@@ -1,95 +1,101 @@
-import Image from 'next/image'
-import styles from './page.module.css'
+"use client";
 
+import React, { useEffect, useState } from "react";
+import { MagnifyingGlassIcon } from "@heroicons/react/24/solid";
+import Results from "../../components/Results";
+import { SocialIcon } from "react-social-icons";
 export default function Home() {
+  const [mwResults, setMwResults] = useState([]);
+  const [mwSynonyms, setMwSynonyms] = useState([]);
+  const [wordInput, setWordInput] = useState("");
+  const [word, setWord] = useState("");
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const fetchResults = () => {
+    let reqOpt = {
+      method: "GET",
+    };
+
+    fetch(
+      `https://dictionaryapi.com/api/v3/references/collegiate/json/${wordInput}?key=ad1dff85-a50c-48bd-8eef-accb8964867e`,
+      reqOpt
+    )
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("word not found");
+        }
+        return response.json();
+      })
+      .then((result) => {
+        setMwResults(result);
+        setError(null);
+      })
+      .catch((error) => setError(error.message));
+  };
+
+  const fetchSynonyms = () => {
+    let reqOpt = {
+      method: "GET",
+    };
+
+    fetch(
+      `https://dictionaryapi.com/api/v3/references/thesaurus/json/${wordInput}?key=d24a2433-786a-48b0-9a27-246cf052ade0`,
+      reqOpt
+    )
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("word not found");
+        }
+        return response.json();
+      })
+      .then((result) => {
+        setMwSynonyms(result);
+        setError(null);
+      })
+      .catch((error) => setError(error.message));
+  };
+
+  const handleWord = (e) => {
+    e.preventDefault();
+    const word = e.target.word.value;
+    setWordInput(word);
+    setWord(wordInput);
+    fetchResults();
+    fetchSynonyms();
+  };
+
   return (
-    <main className={styles.main}>
-      <div className={styles.description}>
-        <p>
-          Get started by editing&nbsp;
-          <code className={styles.code}>src/app/page.js</code>
-        </p>
-        <div>
-          <a
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{' '}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className={styles.vercelLogo}
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
+    <main className="main-wrap">
+      <div className="social-icons">
+        <SocialIcon style={{width: '29px', height: '29px'}} url="github.com"/>
+        <SocialIcon style={{width: '29px', height: '29px'}}url='linkedin.co.uk' />
+      </div>
+      <div className="title">
+      <h1>
+          NOYCE WORDS
+        </h1>
+        <h2>Dictionary & Thesaurus</h2>
         </div>
+       
+      <div className="form-wrap">
+        
+        <form onSubmit={handleWord} type="submit" className="word-input">
+          <input
+            type="text"
+            name="word"
+            onChange={(e) => setWordInput(e.target.value)}
+            placeholder="Enter a word"
+            className="input"
+            style={{ outline: 0 }}
+          ></input>
+          <button type="submit" className="btn">
+            <MagnifyingGlassIcon className="search" />
+          </button>
+        </form>
       </div>
-
-      <div className={styles.center}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
-
-      <div className={styles.grid}>
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Docs <span>-&gt;</span>
-          </h2>
-          <p>Find in-depth information about Next.js features and API.</p>
-        </a>
-
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Learn <span>-&gt;</span>
-          </h2>
-          <p>Learn about Next.js in an interactive course with&nbsp;quizzes!</p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Templates <span>-&gt;</span>
-          </h2>
-          <p>Explore the Next.js 13 playground.</p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Deploy <span>-&gt;</span>
-          </h2>
-          <p>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
+      
+        <Results mwResults={mwResults} word={word} mwSynonyms={mwSynonyms}/>
+      
     </main>
-  )
+  );
 }
