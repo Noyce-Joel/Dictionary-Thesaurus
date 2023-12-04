@@ -1,3 +1,4 @@
+
 ## Dictionary and Thesaurus
 
 Being a linguist, I love words. Especially sesquipedalian ones 📚
