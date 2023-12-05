@@ -1,7 +1,7 @@
 
 ## Dictionary and Thesaurus
 
-Being a linguist, I love words. Especially sesquipedalian ones 📚
+I love words. Especially sesquipedalian ones 📚
 
 So I thought it would be cool to play around with the Merriam Webster API ⛹️‍♂️
 
